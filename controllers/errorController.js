@@ -4,7 +4,6 @@ const errorController = (err, req, res, next) => {
   console.log(err.message);
   console.log("ERROR NAME");
   console.log(err.name);
-  console.log(err);
 
   if (err.name === "SequelizeValidationError") {
     return res.status(400).json({

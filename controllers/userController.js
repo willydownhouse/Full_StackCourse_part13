@@ -1,12 +1,25 @@
-const { User } = require("../models");
+const bcrypt = require("bcrypt");
+const { User, Blog } = require("../models");
 
 exports.createUser = async (req, res) => {
-  const user = await User.create(req.body);
+  const password = await bcrypt.hash(req.body.password, 12);
 
-  res.status(201).json(user);
+  const user = new User({
+    username: req.body.username,
+    name: req.body.name,
+    password,
+  });
+
+  const createdUser = await user.save();
+
+  res.status(201).json(createdUser);
 };
 exports.getAllUsers = async (req, res) => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    include: {
+      model: Blog,
+    },
+  });
 
   res.json(users);
 };
@@ -30,5 +43,30 @@ exports.deleteUser = async (req, res) => {
   res.status(200).end();
 };
 
-//TÄSSÄ MENOSSA TEHTÄVÄ 13.8
-exports.changeUsername = async (req, res) => {};
+exports.changeUsername = async (req, res) => {
+  const user = await User.findOne({
+    where: {
+      username: req.params.username,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      status: "fail",
+      message: "No user with that ID",
+    });
+  }
+
+  if (!req.body.username) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Please give a new username",
+    });
+  }
+
+  user.username = req.body.username;
+
+  const updatedUser = await user.save();
+
+  res.status(200).json(updatedUser);
+};
