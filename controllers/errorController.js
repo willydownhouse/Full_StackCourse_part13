@@ -15,6 +15,11 @@ const errorController = (err, req, res, next) => {
       status: "error",
       error: err.errors[0].message,
     });
+  } else if (err.name === "SequelizeDatabaseError") {
+    return res.status(400).json({
+      status: "error",
+      error: err.message,
+    });
   }
 
   next(err);
