@@ -11,7 +11,10 @@ exports.getAllBlogs = async (req, res, next) => {
   }
 
   const blogs = await Blog.findAll({
-    attributes: { exclude: ["UserId"] },
+    attributes: {
+      exclude: ["UserId"],
+      include: ["created_at", "updated_at", "year"],
+    },
     include: {
       model: User,
       attributes: ["name"],
@@ -50,13 +53,14 @@ exports.createBlog = async (req, res, next) => {
   console.log("CURRENT USER");
   console.log(req.user.dataValues);
 
+  console.log(req.body);
+
   const blog = new Blog({
-    author: req.body.author,
-    title: req.body.title,
-    url: req.body.url,
-    likes: req.body.likes,
+    ...req.body,
     UserId: req.user.dataValues.id,
   });
+
+  console.log(blog);
 
   await blog.save();
 
