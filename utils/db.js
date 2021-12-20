@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const { DATABASE_URL } = require("../utils/config");
 const { Umzug, SequelizeStorage } = require("umzug");
+const { MEDIUMINT } = require("sequelize");
 
 const sequelize = new Sequelize(DATABASE_URL, {
   dialectOptions: {
@@ -29,15 +30,19 @@ const runMigrations = async () => {
       glob: "migrations/*.js",
     },
     context: sequelize.getQueryInterface(),
+    logger: console,
   });
   // const down = await migrator.down();
   // console.log(down);
-  const migrations = await migrator.up();
-  console.log("EXECUTED MIGRATIONS");
+  const a = await migrator.up();
+
+  console.log("a");
+  console.log(a);
+
+  const migrations = await migrator.executed();
+
+  console.log("MIGRATIONS executed:");
   console.log(migrations);
-  console.log("Migrations up to date", {
-    files: migrations.map((mig) => mig.file),
-  });
 };
 
 const connectToDatabase = async () => {

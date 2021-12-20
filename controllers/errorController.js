@@ -20,6 +20,11 @@ const errorController = (err, req, res, next) => {
       status: "error",
       error: err.message,
     });
+  } else if (err.name === "TokenExpiredError") {
+    return res.status(401).json({
+      status: "error",
+      error: `${err.message}, please login again `,
+    });
   }
 
   next(err);

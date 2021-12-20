@@ -1,6 +1,8 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../utils/db");
 
+const minYear = 1991;
+
 const Blog = sequelize.define(
   "Blog",
   {
@@ -24,6 +26,22 @@ const Blog = sequelize.define(
     likes: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      validate: {
+        isBetween: function (value) {
+          if (
+            parseInt(value) < minYear ||
+            parseInt(value) > new Date().getFullYear()
+          ) {
+            throw new Error(
+              `Year must be between ${minYear} and ${new Date().getFullYear()}`
+            );
+          }
+        },
+      },
+      defaultValue: new Date().getFullYear(),
     },
   },
   {

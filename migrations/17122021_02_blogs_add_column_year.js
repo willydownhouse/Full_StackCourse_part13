@@ -6,12 +6,15 @@ module.exports = {
     await queryInterface.addColumn("blogs", "year", {
       type: DataTypes.INTEGER,
       validate: {
-        isGreaterThanOtherField(value) {
+        isBetween: function (value) {
           if (parseInt(value) < 1991) {
-            console.log("VÄÄRÄ VUOSI");
+            return false;
           }
+          return true;
         },
       },
+
+      defaultValue: new Date().getFullYear(),
     });
   },
   down: async ({ context: queryInterface }) => {
