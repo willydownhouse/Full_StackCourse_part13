@@ -1,7 +1,6 @@
 const Sequelize = require("sequelize");
 const { DATABASE_URL } = require("../utils/config");
 const { Umzug, SequelizeStorage } = require("umzug");
-const { MEDIUMINT } = require("sequelize");
 
 const sequelize = new Sequelize(DATABASE_URL, {
   dialectOptions: {
@@ -32,8 +31,8 @@ const runMigrations = async () => {
     context: sequelize.getQueryInterface(),
     logger: console,
   });
-  // const down = await migrator.down();
-  // console.log(down);
+  //const down = await migrator.down({ step: 3 });
+  //console.log(down);
   const a = await migrator.up();
 
   console.log("a");

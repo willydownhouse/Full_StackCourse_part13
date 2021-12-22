@@ -25,6 +25,11 @@ const errorController = (err, req, res, next) => {
       status: "error",
       error: `${err.message}, please login again `,
     });
+  } else if (err.name === "SequelizeForeignKeyConstraintError") {
+    return res.status(401).json({
+      status: "error",
+      error: err.message,
+    });
   }
 
   next(err);

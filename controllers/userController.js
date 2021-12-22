@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { User, Blog } = require("../models");
+const { User, Blog, Reading, UserReading } = require("../models");
 
 exports.createUser = async (req, res) => {
   const password = await bcrypt.hash(req.body.password, 12);
@@ -69,4 +69,40 @@ exports.changeUsername = async (req, res) => {
   const updatedUser = await user.save();
 
   res.status(200).json(updatedUser);
+};
+
+exports.getOneUser = async (req, res) => {
+  console.log(req.query);
+
+  const where = {};
+
+  if (req.query.hasOwnProperty("read")) {
+    where.readed = req.query.read;
+  }
+  console.log("WHERE");
+  console.log(where);
+  const user = await User.findByPk(req.params.id, {
+    include: {
+      model: Reading,
+      attributes: {
+        exclude: ["BlogId"],
+      },
+      include: {
+        model: Blog,
+        attributes: {
+          exclude: ["UserId"],
+        },
+      },
+      where,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      status: "fail",
+      message: "No results found",
+    });
+  }
+
+  res.status(200).json(user);
 };

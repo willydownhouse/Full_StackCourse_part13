@@ -10,6 +10,9 @@ router
 
 router.route("/:username").put(userController.changeUsername);
 
-router.route("/:id").delete(userController.deleteUser);
+router
+  .route("/:id")
+  .delete(userController.deleteUser)
+  .get(userController.getOneUser);
 
 module.exports = router;
