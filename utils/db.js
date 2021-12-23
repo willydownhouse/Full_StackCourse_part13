@@ -31,7 +31,7 @@ const runMigrations = async () => {
     context: sequelize.getQueryInterface(),
     logger: console,
   });
-  //const down = await migrator.down({ step: 3 });
+  //const down = await migrator.down();
   //console.log(down);
   const a = await migrator.up();
 

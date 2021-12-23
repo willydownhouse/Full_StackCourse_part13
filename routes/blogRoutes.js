@@ -5,7 +5,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(blogController.getAllBlogs)
+  .get(authController.checkIfLoggedIn, blogController.getAllBlogs)
   .post(authController.checkIfLoggedIn, blogController.createBlog);
 
 router

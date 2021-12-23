@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Token } = require("../models");
 const { SECRET, EXPIRES } = require("../utils/config");
 
 exports.login = async (req, res) => {
@@ -31,6 +31,11 @@ exports.login = async (req, res) => {
 
   const token = jwt.sign(userForToken, SECRET, {
     expiresIn: EXPIRES,
+  });
+
+  await Token.create({
+    token,
+    userId: user.id,
   });
 
   res.status(200).json({
@@ -68,7 +73,43 @@ exports.checkIfLoggedIn = async (req, res, next) => {
     });
   }
 
+  token = await Token.findOne({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!token) {
+    return res.status(401).json({
+      status: "fail",
+      message: "You don't have active token. Please login again",
+    });
+  }
+
   req.user = user;
 
   next();
+};
+
+exports.allowOnlyTo =
+  (...roles) =>
+  (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You are not allowed to do this action",
+      });
+    }
+
+    next();
+  };
+
+exports.logout = async (req, res) => {
+  await Token.destroy({
+    where: {
+      userId: req.user.id,
+    },
+  });
+
+  res.send("Succesfully logged out");
 };
