@@ -1,4 +1,4 @@
-const Blog = require("./blogModel");
+const Blog = require("./BlogModel");
 const User = require("./userModel");
 const Reading = require("./readingModel");
 const UserReading = require("./userReading");
